@@ -26,14 +26,14 @@ def file_analize(file_name):
             key = splitted[2]
 
             if command == "add product":
-                products[key] = ProductData(product, splitted[3], splitted[4])
+                products[key] = ProductData(splitted[3], splitted[4])
 
             elif command == "change amount":
                 products[key].change_amount(splitted[3])
 
             elif command == "ship order":
                 for i in range(2, len(splitted), 2):
-                    products[splited[i]].sell_item(splitted[i+1])
+                    products[splitted[i]].sell_item(splitted[i+1])
 
     return products
 
@@ -41,16 +41,16 @@ def file_analize(file_name):
 def find_best_selling_product(file_name):
     shop_log = file_analize(file_name)
     most_expensive = 0
-    most_profitble_name=""
+    most_profitble_name = ""
 
     for name, product in enumerate(shop_log):
         if most_expensive < product.profit:
             most_expensive = product.profit
             current_selling_price = product.price
-            most_profitble_name=name
+            most_profitble_name = name
         elif most_expensive == product.profit \
                 and most_profitble_name > name:
-            most_profitble_name=name
+            most_profitble_name = name
             current_selling_price = product.price
 
     return most_profitble_name, current_selling_price
@@ -59,4 +59,5 @@ def find_best_selling_product(file_name):
 def find_k_most_expensive_products(file_name, k):
     if k <= 0:
         return []
-    ordered = sorted(file_analyze(file_name).items(), key=lambda pair: (pair[1].price, pair[0]))
+    ordered = sorted(file_analize(file_name).items(), key=lambda pair: (pair[1].price, pair[0]))
+    return ordered[:k]
