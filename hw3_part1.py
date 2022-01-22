@@ -1,55 +1,62 @@
+
 class ProductData:
     def __init__(self, amount, price):
-        self.amount = amount
-        self.price = price
-        self.profit=0
+        self.amount = float(amount)
+        self.price = float(price)
+        self.profit = 0
+
     def change_amount(self, amount):
-        self.amount += amount
-    def sell_item(self, amount):
+        self.amount += float(amount)
+
+    def sell_item(self, amount_):
+        amount = float(amount_)
         if(self.amount < amount):
             return
         self.change_amount(-amount)
-        self.profit = self.price * amount
+        self.profit += self.price * amount
+
+
 def file_analize(file_name):
-    my_dict = {}
+    products = {}
+
     with open(file_name) as f:
         for line in f:
-            data = line.split()
-            if(data[0] == "add"):
-                if(data[1] == "product"):
-                    product = ProductData.__init__(product, float(data[3]), float(data[4]))
-                    my_dict[line[2]] == product
-            if(data[0] == "change"):
-                if(data[1] == "amount"):
-                    element = my_dict[data[2]]
-                    element.change_amount(float(data[3]))
-            if(data[0] == "ship"):
-                if(data[1] == "order"):
-                    for i in range(2, data.__len__(), 2):
-                        data = my_dict[data[i]]
-                        data.sell_item(float(data[i+1]))
-    return my_dict
+            splitted = line.split()
+            command = " ".join(splitted[:2])
+            key = splitted[2]
+
+            if command == "add product":
+                products[key] = ProductData(product, splitted[3], splitted[4])
+
+            elif command == "change amount":
+                products[key].change_amount(splitted[3])
+
+            elif command == "ship order":
+                for i in range(2, len(splitted), 2):
+                    products[splited[i]].sell_item(splitted[i+1])
+
+    return products
+
+
 def find_best_selling_product(file_name):
-    shop_log = {}
     shop_log = file_analize(file_name)
     most_expensive = 0
-    most_profitble_name = ""
-    for name, data in enumerate(shop_log):
-        if(most_expensive< data.profit):
-            most_expensive = data.profit
-            current_selling_price = data.price
-            most_profitble_name = name
-        elif (most_expensive == data.profit):
-            if(most_profitble_name > name):
-                most_profitble_name =name
-                current_selling_price = data.price
-    return(most_profitble_name, current_selling_price)
+    most_profitble_name=""
+
+    for name, product in enumerate(shop_log):
+        if most_expensive < product.profit:
+            most_expensive = product.profit
+            current_selling_price = product.price
+            most_profitble_name=name
+        elif most_expensive == product.profit \
+                and most_profitble_name > name:
+            most_profitble_name=name
+            current_selling_price = product.price
+
+    return most_profitble_name, current_selling_price
+
+
 def find_k_most_expensive_products(file_name, k):
-    ordered_products = []
-    shop_log = {}
-    if(k <= 0):
-        return ordered_products
-    shop_log = file_analize(file_name)
-    for name, data in enumerate(shop_log):
-        new_tuple = (data.price, name)
-        ordered_products.append(new_tuple)
+    if k <= 0:
+        return []
+    ordered = sorted(file_analyze(file_name).items(), key=lambda pair: (pair[1].price, pair[0]))
