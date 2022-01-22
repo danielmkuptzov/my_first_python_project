@@ -17,7 +17,7 @@ def file_analize(file_name):
             data = line.split()
             if(data[0] == "add"):
                 if(data[1] == "product"):
-                    product = ProductData.__init__(float(data[3]), float(data[4]))
+                    product = ProductData.__init__(product, float(data[3]), float(data[4]))
                     my_dict[line[2]] == product
             if(data[0] == "change"):
                 if(data[1] == "amount"):
@@ -32,17 +32,24 @@ def file_analize(file_name):
 def find_best_selling_product(file_name):
     shop_log = {}
     shop_log = file_analize(file_name)
-    most_expensive=0
-    most_profitble_name=""
+    most_expensive = 0
+    most_profitble_name = ""
     for name, data in enumerate(shop_log):
         if(most_expensive< data.profit):
             most_expensive = data.profit
             current_selling_price = data.price
             most_profitble_name = name
-        else:
-            if (most_expensive == data.profit):
-                if(most_profitble_name > name):
-                    most_profitble_name =name
-                    current_selling_price = data.price
+        elif (most_expensive == data.profit):
+            if(most_profitble_name > name):
+                most_profitble_name =name
+                current_selling_price = data.price
     return(most_profitble_name, current_selling_price)
 def find_k_most_expensive_products(file_name, k):
+    ordered_products = []
+    shop_log = {}
+    if(k <= 0):
+        return ordered_products
+    shop_log = file_analize(file_name)
+    for name, data in enumerate(shop_log):
+        new_tuple = (data.price, name)
+        ordered_products.append(new_tuple)
